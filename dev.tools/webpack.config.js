@@ -1,21 +1,23 @@
 var path = require('path');
 var webpack = require('webpack');
-var config = require('../config/webpack');
 
 var pj = path.join, pr = path.resolve;
-var root = require('../config.js').app.root;
+
+var config = require('../config.js'),
+    root = config.app.root,
+    wc = config.webpack;
 
 
 module.exports = {
-  entry: config.entry,
+  entry: wc.entry,
 
   output: {
     path: pj(root, 'client/js/'),
     filename: '[name].js'
   },
 
-  debug: !config.production,
-  devtool: !config.production ? 'source-map' : '',
+  debug: !wc.production,
+  devtool: !wc.production ? 'source-map' : '',
 
   resolveLoader: {
     root: pj(root, 'node_modules')

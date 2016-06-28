@@ -1,24 +1,24 @@
 // Created by snov on 22.06.2016.
-// THIS IS FOR MODULE DEVELOPERS ONLY!
-const ok = 2 ** 5;
-console.log('from project: ' + ok);
 
-/*
-const http         = require('http'),
-      fs           = require('fs'),
-      path         = require('path'),
-      contentTypes = require('./utils/content-types'),
-      sysInfo      = require('./utils/sys-info'),
-      env          = process.env;
+import express from 'express';
 
-const express = require('express');
+const app = express();
 
-let server = http.createServer(function (req, res) {
 
+const http     = require('http'),
+  fs           = require('fs'),
+  path         = require('path'),
+  contentTypes = require('./utils/content.types'),
+  sysInfo      = require('./utils/sys.info'),
+  env          = process.env;
+
+let port = env.NODE_PORT || 3000,
+  ip = env.NODE_IP || 'localhost';
+
+app.get('/', function(req, res) {
+  res.send('Hell, Wow!')
 });
 
-let port = env.NODE_PORT || 3000;
-
-server.listen(port, env.NODE_IP || 'localhost', function () {
-  console.log(`Application worker ${process.pid} started... port: ${port}`);
-});*/
+app.listen(port, function() {
+  console.log(`Application worker ${process.pid} started... ${ip}:${port}`);
+});
