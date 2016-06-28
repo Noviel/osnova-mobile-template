@@ -1,25 +1,24 @@
 var path = require('path');
 var webpack = require('webpack');
+var config = require('../config/webpack');
 
-console.log('using ' + __filename);
+var pj = path.join, pr = path.resolve;
+var root = require('../config.js').app.root;
 
-const pj = path.join, pr = path.resolve;
 
 module.exports = {
-  entry: {
-    main: './src/code/client/index'
-  },
+  entry: config.entry,
 
   output: {
-    path: pj(__dirname, 'client/js/'),
+    path: pj(root, 'client/js/'),
     filename: '[name].js'
   },
 
-  debug: true,
-  devtool: 'source-map',
+  debug: !config.production,
+  devtool: !config.production ? 'source-map' : '',
 
   resolveLoader: {
-    root: pj(__dirname, 'node_modules')
+    root: pj(root, 'node_modules')
   },
 
   module: {
@@ -27,7 +26,7 @@ module.exports = {
       {
         test: /\.jsx?$/,
         loader: 'babel',
-        include: [ pr(__dirname, 'src') ]
+        include: [ pr('root', 'src') ]
       },
       {
         test: /\.json$/,
