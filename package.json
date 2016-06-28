@@ -1,6 +1,6 @@
 {
   "name": "osnova-application-template",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Backbone for Client+Server application for node.js and browsers with built-in ES6 syntax support.",
   "private": false,
   "main": "index.js",
