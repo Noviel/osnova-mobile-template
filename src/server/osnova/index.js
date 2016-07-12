@@ -32,6 +32,8 @@ function setupExpress(connection) {
   app.set('view engine', 'pug');
   app.set('views', config.path.views);
 
+  app.use(express.static(config.path.public));
+
   session(app, {
     mongooseConnection: connection,
     secret: 'my big secret string',

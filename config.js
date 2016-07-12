@@ -28,7 +28,7 @@ const config = {
 
   path: {
     root: appRoot,
-    pub: path.resolve(appRoot, './public'),
+    public: path.resolve(appRoot, './public'),
     views: path.resolve(appRoot, './private/views'),
     server:  path.resolve(appRoot, './server')
   },

@@ -3,10 +3,10 @@ var webpack = require('webpack');
 
 var pj = path.join, pr = path.resolve;
 
-var config = require('../config.js'),
-    root = config.path.root,
-    pub = config.path.pub,
-    wc = config.webpack;
+var config = require('../config.js')
+  , root = config.path.root
+  , pub = config.path.public
+  , wc = config.webpack;
 
 
 module.exports = {

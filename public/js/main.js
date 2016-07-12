@@ -44,8 +44,11 @@
 /* 0 */
 /***/ function(module, exports) {
 
+	'use strict';
+
 	// Created by Novi on 20.06.2016.
-	"use strict";
+
+	console.log('Welcome to osnova-application-template');
 
 /***/ }
 /******/ ]);
