@@ -8,6 +8,7 @@ const http     = require('http'),
   config       = global.config,
   root         = config.path.root;
 
+import session from './session';
 import express from 'express';
 import mongoose from 'mongoose';
 
@@ -21,19 +22,34 @@ function setupDatabase() {
   db.once('open', function() {
     console.log('connected to mongo');
   });
+
+  return db;
 }
 
-function setupExpress() {
+function setupExpress(connection) {
   const app = express();
-  
+
   app.set('view engine', 'pug');
   app.set('views', config.path.views);
 
-  app.get('/', function(req, res) {
-    res.render('index', { title: 'Hey', message: 'Hello there!'});
+  session(app, {
+    mongooseConnection: connection,
+    secret: 'my big secret string',
+    resave: false,
+    saveUninitialized: false
   });
 
   return app;
+}
+
+function routes(app) {
+  app.get('/', function(req, res) {
+
+    if (!req.session.views) req.session.views = 1;
+    else req.session.views++;
+
+    res.render('index', { title: 'Hey', message: `views count: ${req.session.views}`});
+  });
 }
 
 export default class OSNOVA {
@@ -41,10 +57,10 @@ export default class OSNOVA {
   }
 
   setup() {
+    this.connection = setupDatabase();
+    this.expApp = setupExpress(this.connection);
 
-    setupDatabase();
-
-    this.expApp = setupExpress();
+    routes(this.expApp);
   }
 
   start() {

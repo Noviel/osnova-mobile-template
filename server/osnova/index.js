@@ -6,6 +6,10 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _session = require('./session');
+
+var _session2 = _interopRequireDefault(_session);
+
 var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
@@ -37,18 +41,33 @@ function setupDatabase() {
   db.once('open', function () {
     console.log('connected to mongo');
   });
+
+  return db;
 }
 
-function setupExpress() {
+function setupExpress(connection) {
   var app = (0, _express2.default)();
+
   app.set('view engine', 'pug');
   app.set('views', config.path.views);
 
-  app.get('/', function (req, res) {
-    res.render('index', { title: 'Hey', message: 'Hello there!' });
+  (0, _session2.default)(app, {
+    mongooseConnection: connection,
+    secret: 'my big secret string',
+    resave: false,
+    saveUninitialized: false
   });
 
   return app;
+}
+
+function routes(app) {
+  app.get('/', function (req, res) {
+
+    if (!req.session.views) req.session.views = 1;else req.session.views++;
+
+    res.render('index', { title: 'Hey', message: 'views count: ' + req.session.views });
+  });
 }
 
 var OSNOVA = function () {
@@ -59,10 +78,10 @@ var OSNOVA = function () {
   _createClass(OSNOVA, [{
     key: 'setup',
     value: function setup() {
+      this.connection = setupDatabase();
+      this.expApp = setupExpress(this.connection);
 
-      setupDatabase();
-
-      this.expApp = setupExpress();
+      routes(this.expApp);
     }
   }, {
     key: 'start',

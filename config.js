@@ -6,12 +6,12 @@ const appRoot = path.resolve(__dirname);
 const env = process.env;
 
 const server = {
-  main: 'default.launcher.js',
+  launcher: 'default.launcher.js',
   path: './server'
 };
 
 const config = {
-  main: path.resolve(path.resolve(appRoot, server.path), server.main),
+  main: path.resolve(path.resolve(appRoot, server.path), server.launcher),
 
   database: {
     path: 'mongodb://localhost/',
