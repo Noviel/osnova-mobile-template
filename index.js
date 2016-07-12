@@ -1,5 +1,4 @@
 // Created by snov on 28.06.2016.
-var config = require('./config'),
-    platform = config.build.platform;
+var config = require('./config');
 
-require('./server/' + platform + '.launcher');
+require(config.main);

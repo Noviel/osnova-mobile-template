@@ -33,18 +33,16 @@ are ready-to-use. You can deploy and launch your application on old environments
 - Set in `package.json` information about your application.
 
 ###Coding
-- Write some cool code in `src/code` folder.
+- Write some cool code in `src/client` and `src/server` folders.
 
-Client-side code is located in `src/code/client`, server-side in `src/code/server`.
 `index.js` in both directories are entry points for client/server.
 This system is server-first in some aspects.
-Common code used at server and at client is treated as more server-side and located in `src/code/server/common`.
+Common code used at server and at client is treated as more server-side and located in `src/server/common`.
 
 ###Building
 
 - Run `npm run build` to build your revolutionary changes in code.
 
-This will put transpiled to ES5 code to `client` and `server` directories.
 `Webpack`+`Babel` build and transpile client code to ES5 and produce a single `client/js/main.js` file,
 and `Babel` transpiles server's code and put it into `server` directory.
 
@@ -53,7 +51,3 @@ and `Babel` transpiles server's code and put it into `server` directory.
 
 ###Publishing
 - Launch your application in production.
-
-###Bugs
-
-Babel es-2015 `export default` feature is not working :() I am investigating the situation!

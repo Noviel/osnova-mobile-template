@@ -2,21 +2,38 @@
 
 var path = require('path');
 
-global.appRoot = path.resolve(__dirname);
+const appRoot = path.resolve(__dirname);
+const env = process.env;
 
-module.exports = {
-  build: {
-    platform: 'specific.platform'
-  },
-  
-  app: {
-    root: path.resolve(__dirname)
+const server = {
+  main: 'specific.platform.launcher.js',
+  path: './server'
+};
+
+const config = {
+  main: path.resolve(path.resolve(appRoot, server.path), server.main),
+
+  server: server,
+
+  deploy: {
+    port: env.NODE_PORT || 3000,
+    ip: env.NODE_IP || 'localhost'
+  },  
+
+
+  path: {
+    root: appRoot,
+    pub: path.resolve(appRoot, './public'),
+    server:  path.resolve(appRoot, './server')
   },
 
   webpack: {
     entry: {
-      main: path.join(appRoot, './src/code/client/index')
+      main: path.join(appRoot, './src/client/index')
     },
     production: true
   }
 };
+
+module.exports = config;
+global.config = config;

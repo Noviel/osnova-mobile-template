@@ -4,7 +4,8 @@ var webpack = require('webpack');
 var pj = path.join, pr = path.resolve;
 
 var config = require('../config.js'),
-    root = config.app.root,
+    root = config.path.root,
+    pub = config.path.pub,
     wc = config.webpack;
 
 
@@ -12,7 +13,7 @@ module.exports = {
   entry: wc.entry,
 
   output: {
-    path: pj(root, 'client/js/'),
+    path: pj(pub, 'js/'),
     filename: '[name].js'
   },
 
@@ -28,7 +29,10 @@ module.exports = {
       {
         test: /\.jsx?$/,
         loader: 'babel',
-        include: [ pr('root', 'src') ]
+        exclude: /(node_modules|bower_components)/,
+        query: {
+          presets: ['es2015', 'stage-0']
+        }
       },
       {
         test: /\.json$/,

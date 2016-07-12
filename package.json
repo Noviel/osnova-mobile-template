@@ -1,13 +1,13 @@
 {
   "name": "osnova-application-template",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Backbone for Client+Server application for node.js and browsers with built-in ES6 syntax support.",
   "private": false,
   "main": "index.js",
   "scripts": {
     "start": "node --use_strict index.js",
     "build-client": "webpack --config dev.tools/webpack.config.js",
-    "build-server": "babel src/code/server -d server",
+    "build-server": "babel src/server -d server",
     "build": "npm run build-server && npm run build-client",
     "patch-release": "npm --no-git-tag-version version patch && npm publish",
     "minor-release": "npm --no-git-tag-version version minor && npm publish",
@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "express": "^4.14.0",
-    "mongoose": "^4.5.1"
+    "mongoose": "^4.5.1",
+    "pug": "^2.0.0-beta3"
   }
 }
