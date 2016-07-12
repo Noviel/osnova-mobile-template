@@ -6,12 +6,17 @@ const appRoot = path.resolve(__dirname);
 const env = process.env;
 
 const server = {
-  main: 'specific.platform.launcher.js',
+  main: 'default.launcher.js',
   path: './server'
 };
 
 const config = {
   main: path.resolve(path.resolve(appRoot, server.path), server.main),
+
+  database: {
+    path: 'mongodb://localhost/',
+    name: 'osnova'
+  },
 
   server: server,
 
@@ -24,6 +29,7 @@ const config = {
   path: {
     root: appRoot,
     pub: path.resolve(appRoot, './public'),
+    views: path.resolve(appRoot, './private/views'),
     server:  path.resolve(appRoot, './server')
   },
 

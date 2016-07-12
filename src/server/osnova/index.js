@@ -1,6 +1,5 @@
 // Created by snov on 29.06.2016.
 
-import express from 'express';
 
 const http     = require('http'),
   path         = require('path'),
@@ -9,23 +8,43 @@ const http     = require('http'),
   config       = global.config,
   root         = config.path.root;
 
+import express from 'express';
+import mongoose from 'mongoose';
+
+function setupDatabase() {
+  const connectString = config.database.path + config.database.name;
+  mongoose.connect(connectString);
+
+  var db = mongoose.connection;
+
+  db.on('error', console.error.bind(console, 'connection error:'));
+  db.once('open', function() {
+    console.log('connected to mongo');
+  });
+}
+
+function setupExpress() {
+  const app = express();
+  
+  app.set('view engine', 'pug');
+  app.set('views', config.path.views);
+
+  app.get('/', function(req, res) {
+    res.render('index', { title: 'Hey', message: 'Hello there!'});
+  });
+
+  return app;
+}
+
 export default class OSNOVA {
   constructor() {
   }
 
   setup() {
 
-    this.expApp = express();
+    setupDatabase();
 
-    const app = this.expApp;
-
-    app.set('view engine', 'pug');
-    app.set('views', path.join(root, '/private/views'));
-    
-    app.get('/', function(req, res) {
-      res.render('index', { title: 'Hey', message: 'Hello there!'});
-    });
-
+    this.expApp = setupExpress();
   }
 
   start() {
