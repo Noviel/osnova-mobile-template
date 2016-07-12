@@ -1,7 +1,11 @@
 {
   "name": "osnova-application-template",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Backbone for Client+Server application for node.js and browsers with built-in ES6 syntax support.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Noviel/osnova-application-template.git"
+  },
   "private": false,
   "main": "index.js",
   "scripts": {
@@ -9,6 +13,7 @@
     "build-client": "webpack --config dev.tools/webpack.config.js",
     "build-server": "babel src/server -d server",
     "build": "npm run build-server && npm run build-client",
+    "watch-client": "webpack --config dev.tools/webpack.config.js --watch",
     "patch-release": "npm --no-git-tag-version version patch && npm publish",
     "minor-release": "npm --no-git-tag-version version minor && npm publish",
     "major-release": "npm --no-git-tag-version version major && npm publish"
