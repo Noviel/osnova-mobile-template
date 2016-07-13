@@ -46,13 +46,11 @@ function setupDatabase() {
 
 function setupExpress(connection) {
   var app = (0, _express2.default)();
-  console.log(config);
 
   app.set('view engine', 'pug');
   app.set('views', config.path.views);
 
   app.use(_express2.default.static(config.path.public));
-  console.log(config.path.public);
 
   (0, _session2.default)(app, {
     mongooseConnection: connection,
