@@ -5,8 +5,7 @@ const http     = require('http'),
   path         = require('path'),
   contentTypes = require('../utils/content.types'),
   sysInfo      = require('../utils/sys.info'),
-  config       = global.config,
-  root         = config.path.root;
+  config       = global.config;
 
 import session from './session';
 import express from 'express';
@@ -28,11 +27,13 @@ function setupDatabase() {
 
 function setupExpress(connection) {
   const app = express();
+  console.log(config);
 
   app.set('view engine', 'pug');
   app.set('views', config.path.views);
 
   app.use(express.static(config.path.public));
+  console.log(config.path.public);
 
   session(app, {
     mongooseConnection: connection,
@@ -45,8 +46,11 @@ function setupExpress(connection) {
 }
 
 function routes(app) {
-  app.get('/', function(req, res) {
+  app.get('/health', function (req,res) {
+    res.header(200).send('I am ok!');
+  });
 
+  app.get('/', function(req, res) {
     if (!req.session.views) req.session.views = 1;
     else req.session.views++;
 
@@ -68,7 +72,8 @@ export default class OSNOVA {
   start() {
     const app = this.expApp;
 
-    app.listen(config.deploy.port, function() {
+    app.listen(config.deploy.port, config.deploy.ip, function() {
+      console.log('-----------------------------------------------------------');
       console.log(`Application worker ${process.pid} started... ${config.deploy.ip}:${config.deploy.port}`);
     });
   }
