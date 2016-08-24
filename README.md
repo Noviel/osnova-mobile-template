@@ -1,14 +1,16 @@
 #OSNOVA: Client+Server application template
 
 ###bI
-Backbone for Client+Server application for node.js and browsers with built-in ES6 syntax support.
+Backbone for Client/Server application for Android/iOS and browsers and node.js with built-in ES6 syntax support.
 Wow such ready-to-go much time to watch anime.
 
-###Philosophy
-Repetition of exact the same actions is boring. Using this template you can
-start creation of your new application in a few minutes.
-Cutting edge features of ES6, Express.js as core of web server and Mongoose for work with database
-are ready-to-use. You can deploy and launch your application on old environments because of built-in transpiling ES6 to ES5.
+###Features
+- Cordova for building Android/iOS mobile application.
+- Cutting edge features of ES6 on any environment.
+- Express.js as core of web server.
+- Mongoose for working with database.
+- Socket.IO for real-time client-server communication.
+- Webpack for building client code for web and mobile.
 
 ###Install
 
@@ -27,24 +29,67 @@ are ready-to-use. You can deploy and launch your application on old environments
   and then cut'n'paste content of `/node_modules/osnova-application-template` to the root of your project.
 
 ###Prepare
+
+####Common
 - Go to `<your-application-name>` root directory.
 - Delete `.git` directory.
-- `npm install` for dependencies.
+- `npm run prepare` to install dependencies.
 - Set in `package.json` information about your application.
 
-###Coding
+####Mobile
+
+You can skip this step, if you don't need mobile application.
+Android/iOS SDKs must be installed in order to build it.
+
+Install Cordova CLI if u don't have it yet:
+
+    npm install -g cordova
+
+Install Cordova's dependencies:
+    
+    npm run prepare-mobile
+    
+Put your application information in `/mobile/config.xml`.
+
+###Workflow
+
 - Write some cool code in `src/client` and `src/server` folders.
 
-`index.js` in both directories are entry points for client/server.
+`index.js` in both directories are entry points for web-client/server.
+`index.mobile.js` is an entry point for mobile application.
+
 This system is server-first in some aspects.
-Common code used at server and at client is treated as more server-side and located in `src/server/common`.
+Common code used at the server and at the client is treated as more server-side and should be located in `src/server/`.
+On a client you can just write `require('../server/your-common-lib')` and it will be compiled by Webpack on the build step.
+
+`/dev.tools/` - for development stage helpers (Webpack config, Gulp, etc).
+`/private/`- for server-only compiled resources such as templates.
+`/public/` - for public web client files.
+`/server/` - for compiled server code.
+
+`/mobile/` is location of the Cordova's project.
+In `/mobile/www/` folder are placed compiled files that ready to be built by Cordova.
 
 ###Building
 
-- Run `npm run build` to build your revolutionary changes in code.
+- `npm run build-server` to build server code.
+`Babel` transpiles server's code and puts it into `/server/` directory.
 
-`Webpack`+`Babel` build and transpile client code to ES5 and produce a single `client/js/main.js` file,
-and `Babel` transpiles server's code and put it into `server` directory.
+- `npm run build-client` to build client code for web.
+`Webpack` compiles from `/src/client/` to a single `index.js` transpiled to ES5 by `Babel` and puts it in `/public/js/`. 
+
+- `npm run build-client-mobile` to build client code for mobile.
+`Webpack` compiles from `/src/client/` to a single `index.js` transpiled to ES5 by `Babel` and puts it in `/mobile/www/js/`. 
+
+- `npm run build` - build server and web client.
+
+
+####Mobile
+- `cd mobile`
+- `cordova build <android|ios>`
+
+See more at  [Cordova's documentation](http://cordova.apache.org/docs/en/latest/guide/cli/index.html#build-the-app).
+
 
 ###Testing
 - Run some tests.

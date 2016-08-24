@@ -1,7 +1,7 @@
 // Created by snov on 29.06.2016.
 
 
-const http     = require('http'),
+const Http     = require('http'),
   path         = require('path'),
   contentTypes = require('../utils/content.types'),
   sysInfo      = require('../utils/sys.info'),
@@ -11,40 +11,14 @@ import session from './session';
 import express from 'express';
 import mongoose from 'mongoose';
 
-function setupDatabase() {
-  const connectString = config.database.path + config.database.name;
-  mongoose.connect(connectString);
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 
-  var db = mongoose.connection;
+import Socket from './socket';
 
-  db.on('error', console.error.bind(console, 'connection error:'));
-  db.once('open', function() {
-    console.log('connected to mongo');
-  });
+function routes(osnova, app) {
 
-  return db;
-}
-
-function setupExpress(connection) {
-  const app = express();
-
-  app.set('view engine', 'pug');
-  app.set('views', config.path.views);
-
-  app.use(express.static(config.path.public));
-
-  session(app, {
-    mongooseConnection: connection,
-    secret: 'my big secret string',
-    resave: false,
-    saveUninitialized: false
-  });
-
-  return app;
-}
-
-function routes(app) {
-  app.get('/health', function (req,res) {
+  app.get('/health', function(req,res) {
     res.header(200).send('I am ok!');
   });
 
@@ -56,23 +30,126 @@ function routes(app) {
   });
 }
 
-export default class OSNOVA {
-  constructor() {
+var OSNOVA = function(start, opts) {
+  opts = opts || {};
+
+  this.loadConfig(config);
+
+  this.actions = {
+    init: [],
+    starting: []
+  };
+
+  if (start) {
+    this.add('starting', start);
+  }
+};
+
+OSNOVA.prototype = Object.create(null);
+OSNOVA.prototype.constructor = OSNOVA;
+
+OSNOVA.prototype.loadConfig = function (config) {
+  this.config = config;
+};
+
+OSNOVA.prototype.add = function(state, action, args) {
+  const dst = this.actions[state];
+  if (!dst) {
+    this.actions[state] = [];
   }
 
-  setup() {
-    this.connection = setupDatabase();
-    this.expApp = setupExpress(this.connection);
+  this.actions[state].push({action: action, args: args});
+};
 
-    routes(this.expApp);
+OSNOVA.prototype.on = OSNOVA.prototype.add;
+
+OSNOVA.prototype.defaultActions = function () {
+  this.add('init', routes, this.express);
+};
+
+OSNOVA.prototype.preInit = function () {
+  var app   = express();
+  var http  = Http.Server(app);
+
+  var io    = new Socket(http);
+
+  io.socketEvent('disconnect', function () {
+    console.log('client disconnected');
+  });
+
+  app.set('view engine', 'pug');
+  app.set('views', config.path.views);
+
+  app.use(express.static(config.path.public.web));
+
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(cookieParser());
+
+  session(app, {
+    mongooseConnection: this.connection,
+    secret: 'my big secret string',
+    resave: false,
+    saveUninitialized: false
+  });
+
+  this.express = app;
+  this.io = io;
+  this.http = http;
+
+  this.defaultActions();
+};
+
+OSNOVA.prototype.__executeActions = function (list) {
+  const count = list.length;
+  var curr;
+  for (var i = 0; i < count; i++) {
+    curr = list[i];
+    curr.action(this, curr.args);
   }
+};
 
-  start() {
-    const app = this.expApp;
+OSNOVA.prototype.initEvents = function () {
+  this.__executeActions(this.actions.init);
+};
 
-    app.listen(config.deploy.port, config.deploy.ip, function() {
-      console.log('-----------------------------------------------------------');
-      console.log(`Application worker ${process.pid} started... ${config.deploy.ip}:${config.deploy.port}`);
+OSNOVA.prototype.startingEvents = function () {
+  this.__executeActions(this.actions.starting);
+};
+
+OSNOVA.prototype.connect = function () {
+  const connectString = config.database.path + config.database.name;
+  return this.connection = mongoose.connect(connectString).connection;
+};
+
+
+OSNOVA.prototype.launch = function () {
+  this.preInit();
+  this.initEvents();
+
+  this.startingEvents();
+  this.listen();
+};
+
+OSNOVA.prototype.listen = function () {
+  const http = this.http,
+        config = this.config;
+
+  http.listen(config.host.port, config.host.ip, function () {
+    console.log(`Application worker ${process.pid} started... ${config.host.ip}:${config.host.port}`);
+  });
+};
+
+OSNOVA.prototype.start = function () {
+  console.log('-----------------------------------------------------------');
+  console.log('OSNOVA v.' + config.version);
+  this.connect()
+    .on('error', console.error.bind(console, 'Connection to MongoDB failed:'))
+    .on('disconnected', this.connect)
+    .once('open', () => {
+      console.log('Connected to MongoDB.');
+      this.launch();
     });
-  }
-}
+};
+
+export default OSNOVA;

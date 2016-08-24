@@ -10,34 +10,55 @@ const server = {
   path: './server'
 };
 
+function getDeployTargetConfig() {
+  if (env.OPENSHIFT_APP_UUID)
+    return require(path.resolve(server.path, './deploy/openshift.config.js'));
+
+  return require(path.resolve(server.path, './deploy/local.config.js'));
+}
+
+const targetConfig = getDeployTargetConfig();
+
+const paths = {
+  root: appRoot,
+  public: {
+    web: path.resolve(appRoot, './public'),
+    mobile: path.resolve(appRoot, './mobile/www')
+  },
+  views: path.resolve(appRoot, './private/views'),
+  server:  path.resolve(appRoot, './server')
+};
+
 const config = {
+  version: require(path.resolve(appRoot,'./package.json')).version,
+
   main: path.resolve(path.resolve(appRoot, server.path), server.launcher),
 
-  database: {
-    path: 'mongodb://localhost/',
-    name: 'osnova'
-  },
+  //server: server,
 
-  server: server,
+  host: targetConfig.host,
+  database: targetConfig.database,
 
-  deploy: {
-    port: env.NODE_PORT || 3000,
-    ip: env.NODE_IP || 'localhost'
-  },  
-
-
-  path: {
-    root: appRoot,
-    public: path.resolve(appRoot, './public'),
-    views: path.resolve(appRoot, './private/views'),
-    server:  path.resolve(appRoot, './server')
-  },
+  path: paths,
 
   webpack: {
-    entry: {
-      main: path.join(appRoot, './src/client/index')
+    web: {
+      public: paths.public.web,
+      entry: {
+        'js/index': path.join(appRoot, './src/client/index.js'),
+        'css/index': path.join(appRoot, './src/styles/index.css')
+      },
+      production: false
     },
-    production: true
+
+    mobile: {
+      public: paths.public.mobile,
+      entry: {
+        'js/index': path.join(appRoot, './src/client/index.mobile.js'),
+        'css/index': path.join(appRoot, './src/styles/index.css')
+      },
+      production: false
+    }
   }
 };
 

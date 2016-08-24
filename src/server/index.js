@@ -2,7 +2,10 @@
 
 import OSNOVA from './osnova';
 
-const osnova = new OSNOVA();
+function myApp(osnova) {
+  osnova.myApp = 'WOWOWOW';
+}
 
-osnova.setup();
+const osnova = new OSNOVA(myApp);
+
 osnova.start();

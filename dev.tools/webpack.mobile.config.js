@@ -1,4 +1,4 @@
-var config = require('../config.js').webpack.web;
+var config = require('../config.js').webpack.mobile;
 var webpackCommon = require('./webpack.common');
 var webpackExport = webpackCommon.configure(config);
 

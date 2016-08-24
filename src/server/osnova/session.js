@@ -3,7 +3,7 @@
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 
-function SNVSession(app, config) {
+function setupSession(app, config) {
   if (!config.store) {
     config.store = new MongoStore({ mongooseConnection: config.mongooseConnection });
   }
@@ -11,4 +11,4 @@ function SNVSession(app, config) {
   app.use(session(config));
 }
 
-module.exports = SNVSession;
+module.exports = setupSession;

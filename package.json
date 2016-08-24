@@ -1,7 +1,7 @@
 {
   "name": "osnova-application-template",
   "version": "0.6.1",
-  "description": "Backbone for Client+Server application for node.js and browsers with built-in ES6 syntax support.",
+  "description": "Backbone for Client/Server application for Android and browsers and node.js with built-in ES6 syntax support.",
   "repository": {
     "type": "git",
     "url": "https://github.com/Noviel/osnova-application-template.git"
@@ -9,14 +9,24 @@
   "private": false,
   "main": "index.js",
   "scripts": {
-    "start": "node --use_strict index.js",
-    "build-client": "webpack --config dev.tools/webpack.config.js",
-    "build-server": "babel src/server -d server",
+    "prepare": "npm install",
+    "prepare-mobile": "cd mobile && cordova prepare",
+
     "build": "npm run build-server && npm run build-client",
+    "build-server": "babel src/server -d server",
+    "build-client": "webpack --config dev.tools/webpack.config.js",
+    "build-client-mobile": "webpack --config dev.tools/webpack.mobile.config.js",
+
     "watch-client": "webpack --config dev.tools/webpack.config.js --watch",
-    "patch-release": "npm --no-git-tag-version version patch && npm publish",
+    "watch-server": "babel src/server -d server --watch",
+
+    "forever": "forever -c node -w index.js",
+
+    "major-release": "npm --no-git-tag-version version major && npm publish",
     "minor-release": "npm --no-git-tag-version version minor && npm publish",
-    "major-release": "npm --no-git-tag-version version major && npm publish"
+    "patch-release": "npm --no-git-tag-version version patch && npm publish",
+
+    "start": "node --use_strict index.js"
   },
   "author": "Sasha snov Noviel <snov.contact@gmail.com>",
   "license": "ISC",
@@ -35,10 +45,16 @@
     "webpack": "^1.13.1"
   },
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.15.2",
     "connect-mongo": "^1.2.1",
+    "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
     "express-session": "^1.14.0",
     "mongoose": "^4.5.1",
-    "pug": "^2.0.0-beta3"
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "pug": "^2.0.0-beta3",
+    "socket.io": "^1.4.8"
   }
 }
