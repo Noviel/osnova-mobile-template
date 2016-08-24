@@ -1,6 +1,6 @@
 {
   "name": "osnova-application-template",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "Backbone for Client/Server application for Android and browsers and node.js with built-in ES6 syntax support.",
   "repository": {
     "type": "git",
@@ -11,21 +11,16 @@
   "scripts": {
     "prepare": "npm install",
     "prepare-mobile": "cd mobile && cordova prepare",
-
     "build": "npm run build-server && npm run build-client",
     "build-server": "babel src/server -d server",
     "build-client": "webpack --config dev.tools/webpack.config.js",
     "build-client-mobile": "webpack --config dev.tools/webpack.mobile.config.js",
-
     "watch-client": "webpack --config dev.tools/webpack.config.js --watch",
     "watch-server": "babel src/server -d server --watch",
-
     "forever": "forever -c node -w index.js",
-
     "major-release": "npm --no-git-tag-version version major && npm publish",
     "minor-release": "npm --no-git-tag-version version minor && npm publish",
     "patch-release": "npm --no-git-tag-version version patch && npm publish",
-
     "start": "node --use_strict index.js"
   },
   "author": "Sasha snov Noviel <snov.contact@gmail.com>",
